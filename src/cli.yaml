@@ -1,0 +1,41 @@
+name: Dotty
+version: 0.1
+about: A dotfile manager that supports dependancies and dotfile generation.
+#author: Linden Krouse <ztaticnull@gmail.com>
+
+settings:
+    - ArgRequiredElseHelp
+
+subcommands:
+    - install:
+        about: Installs dotfiles from a module.
+        args:
+            - module_name:
+                index: 1
+                help: Name of module to install
+                required: true
+            - force:
+                short: f 
+                long: force
+                help: Will overwrite any existing files/symlinks
+    - update:
+        about: Recompiles any generated configs and re-symlinks all files. Does not re-run scripts. 
+        args:
+            - module_name:
+                index: 1
+                help: Name of module to update 
+                required: true
+    - remove:
+        about: Removes a module.
+        args:
+            - module_name:
+                index: 1
+                help: Name of module to remove
+                required: true 
+    - reinstall:
+        about: Uninstalls a module then installs it again.
+        args:
+            - module_name:
+                index: 1
+                help: Name of module to reinstall 
+                required: true
