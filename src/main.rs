@@ -1,10 +1,20 @@
+#![feature(custom_derive, plugin)]
+#![plugin(serde_macros)]
+
 #[macro_use]
 extern crate clap;
+extern crate serde;
+extern crate serde_yaml;
 
 use std::path::PathBuf;
 use std::env::{var_os, split_paths, join_paths};
+use std::process::exit;
 
 mod consts;
+mod module;
+mod error;
+
+use module::ModuleData;
 
 struct Config {
     pub local_data_dir : PathBuf,
@@ -41,4 +51,14 @@ fn main() {
     };
     
     println!("{} {}", command, module);
+    
+    let m = match ModuleData::load(module){
+        Ok(m) => m,
+        Err(e) => {
+            println!("Error when parsing module config '{}':\n{}", module, e);
+            exit(1);
+        }
+    };
+    
+    println!("{:?}", m);
 }
