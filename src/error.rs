@@ -24,6 +24,7 @@ impl From<serde_yaml::Error> for DottyError {
 
 impl fmt::Display for DottyError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        println!("Calling fmt on error.");
         match *self {
             DottyError::IOError(ref e) => e.fmt(f),
             DottyError::YamlError(ref e) => e.fmt(f)
@@ -33,6 +34,7 @@ impl fmt::Display for DottyError {
 
 impl error::Error for DottyError {
     fn description(&self) -> &str {
+        println!("Calling description on error");
         match *self {
             DottyError::IOError(ref e) => e.description(),
             DottyError::YamlError(ref e) => e.description(),
