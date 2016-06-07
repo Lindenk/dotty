@@ -5,3 +5,6 @@ authors = ["Linden Krouse <ztaticnull@gmail.com>"]
 
 [dependencies]
 clap = {version = "*", features = ["yaml"] }
+serde = "*"
+serde_macros = "*"
+serde_yaml = "*"
