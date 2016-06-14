@@ -7,10 +7,11 @@ use error::DottyError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ModuleData {
-    links   : Vec<String>,
-    append  : HashMap<String, String>,
-    hooks   : HashMap<String, String>,
-    dependancies : Vec<String>
+    pub name    : String,
+    pub links   : Option<Vec<String>>,
+    pub append  : Option<HashMap<String, String>>,
+    pub hooks   : Option<HashMap<String, String>>,
+    pub dependancies : Option<Vec<String>>
 }
 
 impl ModuleData {
