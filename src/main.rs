@@ -6,52 +6,34 @@ extern crate clap;
 extern crate serde;
 extern crate serde_yaml;
 
-use std::path::PathBuf;
-use std::env::{var_os, split_paths, join_paths};
 use std::process::exit;
 
 mod consts;
+mod cli;
 mod module;
 mod error;
+mod subcommands;
 
-use module::ModuleData;
+use cli::parse_cli_args;
 
-struct Config {
-    pub local_data_dir : PathBuf,
-}
-
-impl Config {
-    fn new() -> Config {
-        if let Some(home_dir) = var_os("HOME") {
-            let mut paths = split_paths(&home_dir).collect::<Vec<_>>();
-            paths.push(PathBuf::from(consts::DEFAULT_DATA_DIR));
-            Config{ local_data_dir: PathBuf::from(join_paths(paths).unwrap()) }
-        } else {
-            Config{ local_data_dir: PathBuf::from("/tmp/dotty") }
-        }
-    }
-}
-
-fn main() {
+fn main() {    
+    // Load config
+    //let _ = Config::new();
+    
     // Parse cli options
-    let yml = load_yaml!("cli.yaml");
+    let yml = load_yaml!("src/cli.yaml");
     let cli_args = clap::App::from_yaml(yml).get_matches();
+    let command = parse_cli_args(cli_args);
     
-    let _ = Config::new();
+    // Execute subcommand
+    //let mod_name = cli_args.subcommand_matches(m).unwrap().value_of("module_name");
+    command.run().unwrap_or_else(|e| {
+        println!("{}", e);
+        exit(1);
+    });
     
-    let get_module_name = |m| cli_args.subcommand_matches(m).unwrap().value_of("module_name").unwrap();
-    
-    // only run impure actions once we are certain they will work
-    let (command, module) = match cli_args.subcommand_name() {
-        Some(m @ "install") | Some(m @ "remove") | Some(m @ "update") | Some(m @ "reinstall") => {
-            //proc_install(get_module_name(m))
-            (m, get_module_name(m))
-        }
-        _ => unreachable!()
-    };
-    
-    println!("{} {}", command, module);
-    
+    //println!("{} {}", command, module);
+    /*
     let m = match ModuleData::load(module){
         Ok(m) => m,
         Err(e) => {
@@ -61,4 +43,5 @@ fn main() {
     };
     
     println!("{:?}", m);
+    */
 }
