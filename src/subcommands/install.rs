@@ -2,7 +2,7 @@ use module::ModuleData;
 use error;
 
 pub struct InstallOptions {
-    
+    pub module_name : String
 }
 
 /// Installs a module by running it's hooks, symlinking
