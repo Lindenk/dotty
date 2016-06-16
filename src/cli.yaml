@@ -6,6 +6,13 @@ about: A dotfile manager that supports dependancies and dotfile generation.
 settings:
     - ArgRequiredElseHelp
 
+args:
+    - config_dir:
+        help: Loads config file from given path rather than '$HOME/.config/dotty/dotty.conf'.
+        short: c 
+        long: config 
+        takes_value: true
+
 subcommands:
     - install:
         about: Installs dotfiles from a module.
