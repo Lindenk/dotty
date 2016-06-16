@@ -4,6 +4,7 @@ pub mod update;
 pub mod reinstall;
 
 use error;
+use config::Config;
 use self::install::{install, InstallOptions};
 use self::remove::{remove, RemoveOptions};
 use self::update::{update, UpdateOptions};
@@ -17,12 +18,12 @@ pub enum Command {
 }
 
 impl Command {
-    pub fn run(&self) -> Result<(), error::DottyError> {
+    pub fn run(&self, conf : Config) -> Result<(), error::DottyError> {
         match *self {
-            Command::Install(ref opts) => install(opts),
-            Command::Remove(ref opts) => remove(opts),
-            Command::Update(ref opts) => update(opts),
-            Command::Reinstall(ref opts) => reinstall(opts),
+            Command::Install(ref opts) => install(opts, conf),
+            Command::Remove(ref opts) => remove(opts, conf),
+            Command::Update(ref opts) => update(opts, conf),
+            Command::Reinstall(ref opts) => reinstall(opts, conf),
         }
         
             //let get_module_name = |m| cli_args.subcommand_matches(m).unwrap().value_of("module_name");

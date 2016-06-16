@@ -13,35 +13,39 @@ mod cli;
 mod module;
 mod error;
 mod subcommands;
+mod config;
+mod utils;
+mod file;
 
 use cli::parse_cli_args;
+use config::ConfigBuilder;
+use utils::path_from_env;
 
-fn main() {    
-    // Load config
-    //let _ = Config::new();
-    
+fn main() {
     // Parse cli options
     let yml = load_yaml!("src/cli.yaml");
     let cli_args = clap::App::from_yaml(yml).get_matches();
-    let command = parse_cli_args(cli_args);
     
+    // Load config
+    let mut config_path = path_from_env("HOME")
+                          .unwrap_or_else(|e| {
+                              println!("{}", e); exit(1);});
+    config_path.push(cli_args.value_of("config_dir")
+               .unwrap_or(consts::DEFAULT_USER_CONFIG_FILE));
+    let config =    ConfigBuilder::default()
+                    .load_into(config_path)
+                    .unwrap_or_else(|e| {
+                        println!("{}", e);
+                        exit(1);});
+    let config =    config.validate()
+                    .unwrap_or_else(|e| {
+                        println!("{}", e);
+                        exit(1);});
+        
     // Execute subcommand
-    //let mod_name = cli_args.subcommand_matches(m).unwrap().value_of("module_name");
-    command.run().unwrap_or_else(|e| {
+    let command = parse_cli_args(cli_args);
+    command.run(config).unwrap_or_else(|e| {
         println!("{}", e);
         exit(1);
     });
-    
-    //println!("{} {}", command, module);
-    /*
-    let m = match ModuleData::load(module){
-        Ok(m) => m,
-        Err(e) => {
-            println!("Error when parsing module config '{}':\n{}", module, e);
-            exit(1);
-        }
-    };
-    
-    println!("{:?}", m);
-    */
 }
