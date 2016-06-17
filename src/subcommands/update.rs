@@ -1,4 +1,4 @@
-use module::ModuleData;
+use module::Module;
 use error;
 use config::Config;
 

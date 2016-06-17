@@ -7,7 +7,7 @@ use serde_yaml;
 use error::DottyError;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ModuleData {
+struct ModuleData {
     pub name    : String,
     pub links   : Option<Vec<String>>,
     pub append  : Option<HashMap<String, String>>,
@@ -15,10 +15,25 @@ pub struct ModuleData {
     pub dependancies : Option<Vec<String>>
 }
 
-impl ModuleData {
+pub struct Module {
+    pub name    : String,
+    pub links   : Vec<String>,
+    pub append  : HashMap<String, String>,
+    pub hooks   : HashMap<String, String>,
+    pub dependancies : Vec<String>
+}
+
+impl Module {
     pub fn load<P: AsRef<Path>>(mod_name : P) -> Result<Self, DottyError> {
         let f : File = try!(open(mod_name.as_ref().join("module.yml")));
-        let m : ModuleData = try!(serde_yaml::from_reader::<File, Self>(f));
-        Ok(m)
+        let m : ModuleData = try!(serde_yaml::from_reader::<File, ModuleData>(f));
+        
+        Ok(Module{
+            name:   m.name,
+            links:  m.links.unwrap_or(Vec::new()),
+            append: m.append.unwrap_or(HashMap::new()),
+            hooks:  m.hooks.unwrap_or(HashMap::new()),
+            dependancies:   m.dependancies.unwrap_or(Vec::new())
+        })
     }
 }
