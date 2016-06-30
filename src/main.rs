@@ -16,10 +16,12 @@ mod subcommands;
 mod config;
 mod utils;
 mod file;
+mod data;
 
 use cli::parse_cli_args;
 use config::ConfigBuilder;
-use utils::path_from_env;
+
+use std::path::PathBuf;
 
 fn main() {
     // Parse cli options
@@ -27,11 +29,12 @@ fn main() {
     let cli_args = clap::App::from_yaml(yml).get_matches();
     
     // Load config
-    let mut config_path = path_from_env("HOME")
-                          .unwrap_or_else(|e| {
-                              println!("{}", e); exit(1);});
-    config_path.push(cli_args.value_of("config_dir")
-               .unwrap_or(consts::DEFAULT_USER_CONFIG_FILE));
+    let config_path = PathBuf::from(cli_args.value_of("config_dir")
+                            .unwrap_or(consts::DEFAULT_USER_CONFIG_FILE))
+                        .canonicalize()
+                        .unwrap_or_else(|e| {
+                            println!("{}", e);
+                            exit(1);});
     let config =    ConfigBuilder::default()
                     .load_into(config_path)
                     .unwrap_or_else(|e| {
@@ -44,7 +47,7 @@ fn main() {
         
     // Execute subcommand
     let command = parse_cli_args(cli_args);
-    command.run(config).unwrap_or_else(|e| {
+    command.run(&config).unwrap_or_else(|e| {
         println!("{}", e);
         exit(1);
     });

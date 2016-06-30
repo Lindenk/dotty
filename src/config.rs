@@ -1,5 +1,4 @@
 use std::path::PathBuf;
-use std::env::{var_os, split_paths, join_paths};
 
 use error::DottyError;
 use consts;
@@ -8,6 +7,8 @@ use std::path::Path;
 use std::fs::File;
 use file::open;
 use serde_yaml;
+
+use utils::resolve_tilde;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ConfigBuilder {
@@ -20,13 +21,8 @@ pub struct Config {
 
 impl ConfigBuilder {
     pub fn default() -> ConfigBuilder {
-        let local_data_dir = if let Some(home_dir) = var_os("HOME") {
-            let mut paths = split_paths(&home_dir).collect::<Vec<_>>();
-            paths.push(PathBuf::from(consts::DEFAULT_DATA_DIR));
-            Some(PathBuf::from(join_paths(paths).unwrap()))
-        } else {
-            None
-        };
+        let local_data_dir = resolve_tilde(
+            &PathBuf::from(consts::DEFAULT_DATA_DIR)).ok();
         
         ConfigBuilder { 
             local_data_dir: local_data_dir
@@ -35,7 +31,12 @@ impl ConfigBuilder {
     
     pub fn load<P: AsRef<Path>>(path : P) -> Result<ConfigBuilder, DottyError> {
         let f : File = try!(open(path.as_ref()));
-        let loaded_config : ConfigBuilder = try!(serde_yaml::from_reader::<File, Self>(f));
+        let mut loaded_config : ConfigBuilder = try!(serde_yaml::from_reader::<File, Self>(f));
+
+        if let Some(d) = loaded_config.local_data_dir {
+            loaded_config.local_data_dir = Some(try!(resolve_tilde(&d)));
+        }
+
         Ok(loaded_config)
     }
     
