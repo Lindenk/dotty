@@ -2,6 +2,7 @@
 /// path information in it's errors
 
 use std::io;
+use std::io::Write;
 use std::fs::File;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -31,6 +32,10 @@ impl error::Error for FileError {
 pub fn open<P : AsRef<Path>>(path : P) -> Result<File, FileError> {
     let cloned_path = path.as_ref().clone();
     File::open(cloned_path).map_err(|e| FileError(e, cloned_path.to_path_buf()))
+}
+
+pub fn write(f : &File, buf : &[u8]) -> Result<usize, FileError> {
+    f.write(buf).map_err(|e| FileError(e, PathBuf::from("")))
 }
 
 pub fn create<P : AsRef<Path>>(path : P) -> Result<File, FileError> {

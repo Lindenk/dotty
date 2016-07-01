@@ -35,8 +35,12 @@ pub fn install(opts : &InstallOptions, conf : &Config) -> Result<(), DottyError>
     }
 
     // Install the module 
-    for link in &m.links {
-        symlink(&link.0, &link.1).unwrap();
+    let installed_links : Vec<PathBuf> = vec![];
+    for link in m.links {
+        match symlink(&link.0, &link.1) {
+            Ok(..) => installed_links.push(link),
+            Err(e) => println!("Unable to symlink '{}': {}", link, e)
+        }
     }
 
     try!(store_module(&conf, &m));

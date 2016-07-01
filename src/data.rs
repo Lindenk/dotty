@@ -1,26 +1,41 @@
 /// This module allows the storage of system state data 
 use error::DottyError;
 use config::Config;
-use module::Module;
-use file::{create, create_dir_all, remove_file};
+use file::{open, create, write, create_dir_all, remove_file};
 
-use std::io::Write;
+use std::path::PathBuf;
+use std::fs::File;
 
-pub fn store_module(config : &Config, module : &Module) -> Result<(), DottyError> {
-    try!(create_dir_all(&config.local_data_dir.join(&module.name)));
-    let mut f = try!(create(config.local_data_dir.join(&module.name).join("module.yml")));
+use serde_yaml;
 
-    f.write(module.serialize().as_bytes()).unwrap();
+#[derive(Debug, Serialize, Deserialize)]
+pub struct InstalledModuleData {
+    pub name : String,
+    /// A vec of symlinks currently installed by the module
+    pub symlinks : Vec<PathBuf>
+}
+
+pub fn store_module_data(config : &Config, module_data : &InstalledModuleData) -> 
+                                        Result<(), DottyError> {
+    try!(create_dir_all(&config.local_data_dir));
+
+    let mut serialized_data = serde_yaml::to_string(&module_data).unwrap();
+    let mut f = try!(create(config.local_data_dir.join(&module_data.name)));
+
+    try!(write(&f, serialized_data.as_bytes()));
 
     Ok(())
 }
 
-pub fn load_module(config : &Config, module_name : &str) -> Result<Module, DottyError> {
-    Module::load(config.local_data_dir.join(&module_name))
+pub fn load_module_data(config : &Config, module_name : &str) -> 
+                                        Result<InstalledModuleData, DottyError> {
+    let f = try!(open(config.local_data_dir.join(&module_name)));
+    let result = try!(serde_yaml::from_reader::<File, InstalledModuleData>(f));
+    Ok(result)
 }
 
 pub fn remove_module(config : &Config, module_name : &str) -> Result<(), DottyError> {
-    let path = config.local_data_dir.join(&module_name).join("module.yml");
+    let path = config.local_data_dir.join(&module_name);
     
     remove_file(&path).map_err(|e| {
         DottyError::IOError(e)
@@ -28,5 +43,5 @@ pub fn remove_module(config : &Config, module_name : &str) -> Result<(), DottyEr
 }
 
 pub fn is_module_installed(config : &Config, module_name : &str) -> bool {
-    config.local_data_dir.join(module_name).join("module.yml").exists()
+    config.local_data_dir.join(module_name).exists()
 }
