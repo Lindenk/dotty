@@ -9,7 +9,7 @@ use std::fmt;
 use std::error;
 
 #[derive(Debug)]
-pub struct FileError(io::Error, PathBuf);
+pub struct FileError(pub io::Error, pub PathBuf);
 
 impl fmt::Display for FileError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -41,4 +41,9 @@ pub fn create<P : AsRef<Path>>(path : P) -> Result<File, FileError> {
 pub fn create_dir_all<P : AsRef<Path>>(path : P) -> Result<(), FileError> {
     let cloned_path = path.as_ref().clone();
     fs::create_dir_all(cloned_path).map_err(|e| FileError(e, cloned_path.to_path_buf()))
+}
+
+pub fn remove_file<P : AsRef<Path>>(path : P) -> Result<(), FileError> {
+    let cloned_path = path.as_ref().clone();
+    fs::remove_file(cloned_path).map_err(|e| FileError(e, cloned_path.to_path_buf()))
 }

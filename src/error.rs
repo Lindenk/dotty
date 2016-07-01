@@ -14,6 +14,7 @@ pub enum DottyError {
     
     ModuleSyntaxError(String),
     ModuleAlreadyInstalled(String),
+    ModuleNotInstalled(String),
     ModuleMissingFile(PathBuf),
     ModuleFileAlreadyExists(PathBuf),
 }
@@ -39,6 +40,7 @@ impl fmt::Display for DottyError {
             DottyError::EnvNotFound(ref env) => write!(f, "Can't find environment variable: '${}'", env),
             DottyError::ModuleSyntaxError(ref s) => write!(f, "Module Syntax Error: {}", s),
             DottyError::ModuleAlreadyInstalled(ref s) => write!(f, "Module Already Installed: {}", s),
+            DottyError::ModuleNotInstalled(ref p) => write!(f, "Module not installed: {}", p),
             DottyError::ModuleMissingFile(ref p) => write!(f, "Module file or directory is missing: {}", p.display()),
             DottyError::ModuleFileAlreadyExists(ref p) => write!(f, "File already exists: {}", p.display()),
         }
@@ -54,6 +56,7 @@ impl error::Error for DottyError {
             DottyError::EnvNotFound(..) => "Can't find environment variable.",
             DottyError::ModuleSyntaxError(..) => "Module syntax error.",
             DottyError::ModuleAlreadyInstalled(..) => "Module already installed.",
+            DottyError::ModuleNotInstalled(..) => "Module not installed.",
             DottyError::ModuleMissingFile(..) => "Module file or directory missing.",
             DottyError::ModuleFileAlreadyExists(..) => "Module file already exists.",
         }
@@ -67,6 +70,7 @@ impl error::Error for DottyError {
             DottyError::EnvNotFound(..) => None,
             DottyError::ModuleSyntaxError(..) => None,
             DottyError::ModuleAlreadyInstalled(..) => None,
+            DottyError::ModuleNotInstalled(..) => None,
             DottyError::ModuleMissingFile(..) => None,
             DottyError::ModuleFileAlreadyExists(..) => None,
         }
