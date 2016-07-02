@@ -25,7 +25,7 @@ use std::path::PathBuf;
 
 fn main() {
     // Parse cli options
-    let yml = load_yaml!("src/cli.yaml");
+    let yml = load_yaml!("cli.yaml");
     let cli_args = clap::App::from_yaml(yml).get_matches();
     
     // Load config

@@ -34,7 +34,7 @@ pub fn open<P : AsRef<Path>>(path : P) -> Result<File, FileError> {
     File::open(cloned_path).map_err(|e| FileError(e, cloned_path.to_path_buf()))
 }
 
-pub fn write(f : &File, buf : &[u8]) -> Result<usize, FileError> {
+pub fn write(f : &mut File, buf : &[u8]) -> Result<usize, FileError> {
     f.write(buf).map_err(|e| FileError(e, PathBuf::from("")))
 }
 

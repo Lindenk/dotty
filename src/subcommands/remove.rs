@@ -1,7 +1,7 @@
 use module::Module;
 use error::DottyError;
 use config::Config;
-use data::{load_module, remove_module, is_module_installed};
+use data::{load_module_data, remove_module, is_module_installed};
 use file::remove_file;
 
 use std::env::current_dir;
@@ -18,15 +18,13 @@ pub fn remove(opts : &RemoveOptions, conf : &Config) -> Result<(), DottyError> {
     }
 
     println!("Removing module '{}'...", &opts.module_name);
-    let m = try!(load_module(&conf, opts.module_name.as_str()));
+    let m = try!(load_module_data(&conf, opts.module_name.as_str()));
     
     // Validate module options and config so we don't have a half-broken install
-    for link in &m.links {
-        let dest = &link.1;
-
-        println!("Removing link '{}'", dest.display());
+    for link in &m.symlinks {
+        println!("Removing link '{}'", link.display());
         
-        try!(remove_file(dest));
+        try!(remove_file(link));
     }
 
     try!(remove_module(&conf, opts.module_name.as_str()));

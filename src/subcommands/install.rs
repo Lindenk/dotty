@@ -1,7 +1,7 @@
 use module::Module;
 use error::DottyError;
 use config::Config;
-use data::{store_module, is_module_installed};
+use data::{InstalledModuleData, store_module_data, is_module_installed};
 
 use std::os::unix::fs::symlink;
 use std::path::PathBuf;
@@ -35,15 +35,20 @@ pub fn install(opts : &InstallOptions, conf : &Config) -> Result<(), DottyError>
     }
 
     // Install the module 
-    let installed_links : Vec<PathBuf> = vec![];
+    let mut installed_links : Vec<PathBuf> = vec![];
     for link in m.links {
-        match symlink(&link.0, &link.1) {
-            Ok(..) => installed_links.push(link),
-            Err(e) => println!("Unable to symlink '{}': {}", link, e)
+        let (source, dest) = (link.0, link.1);
+        match symlink(&source, &dest) {
+            Ok(..) => installed_links.push(dest),
+            Err(e) => println!("Unable to symlink '{}' to '{}' : {}", 
+                                    source.display(), dest.display(), e)
         }
     }
 
-    try!(store_module(&conf, &m));
+    try!(store_module_data(&conf, &InstalledModuleData{
+        name: opts.module_name.clone(),
+        symlinks: installed_links,
+    }));
     
     Ok(())
 }
