@@ -1,4 +1,4 @@
-use module::ModuleData;
+use module::Module;
 use error;
 use config::Config;
 
@@ -7,7 +7,7 @@ pub struct ReinstallOptions {
 }
 
 /// Updates links and regenerates files for an installed module
-pub fn reinstall(opts : &ReinstallOptions, conf : Config) -> Result<(), error::DottyError> {
+pub fn reinstall(opts : &ReinstallOptions, conf : &Config) -> Result<(), error::DottyError> {
     /*
     for link in m.links.unwrap() {
         

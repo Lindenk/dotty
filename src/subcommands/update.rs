@@ -1,4 +1,4 @@
-use module::ModuleData;
+use module::Module;
 use error;
 use config::Config;
 
@@ -7,7 +7,7 @@ pub struct UpdateOptions {
 }
 
 /// Updates links and regenerates files for an installed module
-pub fn update(opts : &UpdateOptions, conf : Config) -> Result<(), error::DottyError> {
+pub fn update(opts : &UpdateOptions, conf : &Config) -> Result<(), error::DottyError> {
     /*
     for link in m.links.unwrap() {
         

@@ -18,7 +18,7 @@ pub enum Command {
 }
 
 impl Command {
-    pub fn run(&self, conf : Config) -> Result<(), error::DottyError> {
+    pub fn run(&self, conf : &Config) -> Result<(), error::DottyError> {
         match *self {
             Command::Install(ref opts) => install(opts, conf),
             Command::Remove(ref opts) => remove(opts, conf),
