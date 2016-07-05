@@ -42,12 +42,12 @@ pub fn resolve_tilde(path : &PathBuf) -> Result<PathBuf, DottyError> {
 
 #[cfg(any(target_os = "macos", target_os = "linux"))]
 pub mod os_utils {
-    use std::os::unix::fs::symlink;
+    use std::os::unix::fs::symlink as unix_symlink;
     use std::path::Path;
     use std::io;
 
     pub fn symlink<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> Result<(), io::Error> {
-        symlink(src, dst)
+        unix_symlink(src, dst)
     }
 }
 
