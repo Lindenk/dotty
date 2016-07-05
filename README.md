@@ -1,5 +1,6 @@
 # dotty #
 [![Build Status](https://travis-ci.org/Lindenk/dotty.svg?branch=master)](https://travis-ci.org/Lindenk/dotty)
+[![Build status](https://ci.appveyor.com/api/projects/status/ob7ueebe01pgt4vb/branch/master?svg=true)](https://ci.appveyor.com/project/Lindenk/dotty/branch/master)
 [![Stories in Ready](https://badge.waffle.io/Lindenk/dotty.svg?label=ready&title=Ready)](http://waffle.io/Lindenk/dotty)
 
 
