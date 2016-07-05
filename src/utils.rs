@@ -40,6 +40,34 @@ pub fn resolve_tilde(path : &PathBuf) -> Result<PathBuf, DottyError> {
     }
 }
 
+#[cfg(any(target_os = "macos", target_os = "linux"))]
+pub mod os_utils {
+    use std::os::unix::fs::symlink;
+    use std::path::Path;
+    use std::io;
+
+    pub fn symlink<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> Result<(), io::Error> {
+        symlink(src, dst)
+    }
+}
+
+#[cfg(target_os = "windows")]
+pub mod os_utils {
+    use std::os::windows::fs::{symlink_file, symlink_dir};
+    use std::path::Path;
+    use std::io;
+
+    pub fn symlink<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> Result<(), io::Error> {
+        if src.as_ref().is_file() {
+            symlink_file(src, dst)
+        } else if src.as_ref().is_dir() {
+            symlink_dir(src, dst)
+        } else {
+            unreachable!();
+        }
+    }
+}
+
 #[test]
 fn test_resolve_tilde_simple() {
     let correct_path = home_dir();

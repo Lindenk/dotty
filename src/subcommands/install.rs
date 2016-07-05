@@ -2,8 +2,8 @@ use module::Module;
 use error::DottyError;
 use config::Config;
 use data::{InstalledModuleData, store_module_data, is_module_installed};
+use utils::os_utils::symlink;
 
-use std::os::unix::fs::symlink;
 use std::path::PathBuf;
 
 pub struct InstallOptions {
