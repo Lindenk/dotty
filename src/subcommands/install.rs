@@ -2,7 +2,7 @@ use module::Module;
 use error::DottyError;
 use config::Config;
 use data::{InstalledModuleData, store_module_data, is_module_installed};
-use utils::os_utils::symlink;
+use utils::recursive_symlink;
 
 use std::path::PathBuf;
 
@@ -29,17 +29,17 @@ pub fn install(opts : &InstallOptions, conf : &Config) -> Result<(), DottyError>
         if !source.exists() {
             return Err(DottyError::ModuleMissingFile(source.clone()));
         }
-        if dest.exists() {
+        /*if dest.exists() {
             return Err(DottyError::ModuleFileAlreadyExists(dest.clone()));
-        }
+        }*/
     }
 
     // Install the module 
     let mut installed_links : Vec<PathBuf> = vec![];
     for link in m.links {
         let (source, dest) = (link.0, link.1);
-        match symlink(&source, &dest) {
-            Ok(..) => installed_links.push(dest),
+        match recursive_symlink(&source, &dest) {
+            Ok(v) => installed_links.extend_from_slice(&v),
             Err(e) => println!("Unable to symlink '{}' to '{}' : {}", 
                                     source.display(), dest.display(), e)
         }

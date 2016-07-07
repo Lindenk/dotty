@@ -28,7 +28,7 @@ pub fn store_module_data(config : &Config, module_data : &InstalledModuleData) -
     };
     
     // Save it
-    let mut serialized_data = serde_yaml::to_string(&module_data).unwrap();
+    let serialized_data = serde_yaml::to_string(&module_data).unwrap();
     let mut f = try!(create(config.local_data_dir.join(&module_data.name)));
 
     try!(write(&mut f, serialized_data.as_bytes()));
