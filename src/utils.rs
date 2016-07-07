@@ -1,11 +1,12 @@
 /// This file contain misc functions that are not built into the language, 
 /// or the standard library, but are still needed for this program
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::env::{home_dir, current_dir};
 
 use error::DottyError;
 use file::FileError;
+use std::io;
 
 /*
 pub fn path_from_env(env_name : &str) -> Result<PathBuf, DottyError> {
@@ -40,8 +41,43 @@ pub fn resolve_tilde(path : &PathBuf) -> Result<PathBuf, DottyError> {
     }
 }
 
+
+/// This function will symlink a file or directory and, if it is a directory and already exists, it will 
+/// attempt to symlink the files/directories in the source directory instead. File conflicts will return an 
+/// error. Returns a vec of paths to all symlinks created.
+pub fn recursive_symlink<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> Result<Vec<PathBuf>, FileError> {
+    let mut symlinked_files : Vec<PathBuf> = vec![];
+    
+    let dst = dst.as_ref();
+    let src = src.as_ref();
+    
+    if src.is_dir() && dst.exists() {
+                        
+        if !dst.is_dir() {
+            return Err(FileError(io::Error::new(io::ErrorKind::AlreadyExists, "Attempted to symlink a directory to an existing file."), PathBuf::from(dst)));
+        }
+        
+        // We should be all clear to recurse here
+        let dst_iter = try!(src.read_dir().map_err(|e| FileError(e, PathBuf::from(src))));
+        for f in dst_iter {
+            let f = try!(f.map_err(|e| FileError(e, PathBuf::from(dst))));
+            let mut new_dst = PathBuf::from(dst);
+            new_dst.push(f.file_name());
+            let r_links = try!(recursive_symlink(f.path(), &new_dst));
+            symlinked_files.extend_from_slice(&r_links);
+        }
+    } else {
+        try!(symlink(&src, dst).map_err(|e| FileError(e, PathBuf::from(src))));
+        symlinked_files.push(PathBuf::from(dst));
+    }
+    
+    Ok(symlinked_files)
+}
+
+
+// Platform specific code 
 #[cfg(any(target_os = "macos", target_os = "linux"))]
-pub mod os_utils {
+mod os_utils {
     use std::os::unix::fs::symlink as unix_symlink;
     use std::path::Path;
     use std::io;
@@ -52,7 +88,7 @@ pub mod os_utils {
 }
 
 #[cfg(target_os = "windows")]
-pub mod os_utils {
+mod os_utils {
     use std::os::windows::fs::{symlink_file, symlink_dir};
     use std::path::Path;
     use std::io;
@@ -67,6 +103,8 @@ pub mod os_utils {
         }
     }
 }
+
+pub use self::os_utils::*;
 
 #[test]
 fn test_resolve_tilde_simple() {
