@@ -7,7 +7,8 @@ use utils::recursive_symlink;
 use std::path::PathBuf;
 
 pub struct InstallOptions {
-    pub module_name : String
+    pub module_name : String,
+    pub module_path : PathBuf
 }
 
 /// Installs a module by running it's hooks, symlinking
@@ -18,7 +19,7 @@ pub fn install(opts : &InstallOptions, conf : &Config) -> Result<(), DottyError>
     }
 
     println!("Installing module '{}'...", &opts.module_name);
-    let m = try!(Module::load(&opts.module_name));
+    let m = try!(Module::load(&opts.module_path));
     
     // Validate module options and config so we don't have a half-broken install
     for link in &m.links {

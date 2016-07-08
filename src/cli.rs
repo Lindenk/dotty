@@ -1,4 +1,5 @@
 use clap::ArgMatches;
+use std::path::{PathBuf, Path};
 
 use subcommands::Command;
 use subcommands::install::InstallOptions;
@@ -17,7 +18,9 @@ pub fn parse_cli_args(args : ArgMatches) -> Command {
     match args.subcommand_name() {
         Some("install") => {
             Command::Install(InstallOptions{
-                module_name: get_sub_opt(&args, "module_name").unwrap()
+                // Come on rust >.>, this parses the filename off of the path given
+                module_name: String::from(Path::new(get_sub_opt(&args, "module_name").unwrap().as_str()).file_name().unwrap_or_default().to_str().unwrap()),
+                module_path: PathBuf::from(get_sub_opt(&args, "module_name").unwrap())
             })
         },
         Some("remove") => {
