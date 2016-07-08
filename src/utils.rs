@@ -49,7 +49,7 @@ pub fn recursive_symlink<P: AsRef<Path>, Q: AsRef<Path>>(src: P, dst: Q) -> Resu
     let mut symlinked_files : Vec<PathBuf> = vec![];
     
     let dst = dst.as_ref();
-    let src = src.as_ref();
+    let src = try!(to_absolute(&PathBuf::from(src.as_ref())));
     
     if src.is_dir() && dst.exists() {
                         
