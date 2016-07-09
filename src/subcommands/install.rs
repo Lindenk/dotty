@@ -3,6 +3,7 @@ use error::DottyError;
 use config::Config;
 use data::{InstalledModuleData, store_module_data, is_module_installed};
 use utils::recursive_symlink;
+use file::remove_file;
 
 use std::path::PathBuf;
 
@@ -37,12 +38,24 @@ pub fn install(opts : &InstallOptions, conf : &Config) -> Result<(), DottyError>
 
     // Install the module 
     let mut installed_links : Vec<PathBuf> = vec![];
+    let mut did_error = false;
     for link in m.links {
         let (source, dest) = (link.0, link.1);
         match recursive_symlink(&source, &dest) {
             Ok(v) => installed_links.extend_from_slice(&v),
-            Err(e) => println!("Unable to symlink '{}' to '{}' : {}", 
-                                    source.display(), dest.display(), e)
+            Err(e) => {
+                println!("Unable to symlink '{}' to '{}' : {}", 
+                                    source.display(), dest.display(), e);
+                did_error = true;
+            }
+        }
+    }
+    // Remove installed links if it failed
+    if did_error {
+        for link in &installed_links {
+            if remove_file(&link).is_err() {
+                println!("Failed to remove link: {}", link.display());
+            }
         }
     }
 
