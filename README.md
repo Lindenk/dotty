@@ -50,13 +50,13 @@ links:
     - .zshrc:~/.zshrc 
 ```
 
-Now install your new module:
+Now install your new module as `zsh`:
 
 ```
 dotty install dotfiles/zsh 
 ```
 
-This will install the `zsh` module. To remove it:
+To remove it:
 
 ```
 dotty remove zsh 
