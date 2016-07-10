@@ -40,12 +40,15 @@ impl ConfigBuilder {
         Ok(loaded_config)
     }
     
-    pub fn load_into<P: AsRef<Path>>(&self, path : P) -> Result<ConfigBuilder, DottyError> {
-        let loaded_config = try!(ConfigBuilder::load(path));
+    pub fn load_into<P: AsRef<Path>>(self, path : P) -> ConfigBuilder {
+        let loaded_config = ConfigBuilder::load(path);
         
-        Ok(ConfigBuilder {
-            local_data_dir: loaded_config.local_data_dir.or(self.local_data_dir.clone())
-        })
+        match loaded_config {
+            Ok(c) => ConfigBuilder {
+                local_data_dir: c.local_data_dir.or(self.local_data_dir.clone())
+            },
+            Err(..) => self
+        }
     }
     
     pub fn validate(&self) -> Result<Config, DottyError> {

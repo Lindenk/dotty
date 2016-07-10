@@ -20,6 +20,7 @@ mod data;
 
 use cli::parse_cli_args;
 use config::ConfigBuilder;
+use utils::resolve_tilde;
 
 use std::path::PathBuf;
 
@@ -29,17 +30,13 @@ fn main() {
     let cli_args = clap::App::from_yaml(yml).get_matches();
     
     // Load config
-    let config_path = PathBuf::from(cli_args.value_of("config_dir")
-                            .unwrap_or(consts::DEFAULT_USER_CONFIG_FILE))
-                        .canonicalize()
+    let config_path = resolve_tilde(&PathBuf::from(cli_args.value_of("config_dir")
+                            .unwrap_or(consts::DEFAULT_USER_CONFIG_FILE)))
                         .unwrap_or_else(|e| {
-                            println!("{}", e);
+                            println!("Failed to resolve config file path: {}", e);
                             exit(1);});
     let config =    ConfigBuilder::default()
-                    .load_into(config_path)
-                    .unwrap_or_else(|e| {
-                        println!("{}", e);
-                        exit(1);});
+                    .load_into(config_path);
     let config =    config.validate()
                     .unwrap_or_else(|e| {
                         println!("{}", e);
