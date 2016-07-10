@@ -4,16 +4,3 @@ rust:
 cache: cargo
 notifications:
   email: false
-before_deploy:
-    - export DOTTY_VERSION=`cat Cargo.toml | sed -n -r 's/^version = \"([0-9]+\.[0-9]+\.[0-9])\"/\1/p'`
-    - cargo build --release
-    - tar -czf target/release/dotty_$DOTTY_VERSION.tar.gz
-deploy:
-  provider: releases
-  api_key:
-    secure: YmApvPNFNR2Vy4wBW/WIatre2F19aUmazvvnOXM5kyKjAX4VIzcEt9YJPIKYQZ4YYBp9GmFSN0Y1G1buaNUjUaWMn1RAnFTEgAiONF9WaBRd+KlTN55C7WNRx0YZM3jKrejjEZbw9W35s0boXTh94GdgxsfihD+BLFd7FpWto9Vp5i4/xKh0nf3EW+zHTnwQGl15crJtj+BmE1r0ll0DQvHx0+GyX+gNWSj6yWqM5zPCdwXFofnoqA4TNVimzI8bdq8F+SJ7F9Qu8i4Pxo7hpdXjWzlks64rl4bzGDJGZNfZ+XZO+Ax/FYj+0twt9XXcsbpn7SvRmR3JkwNyH5T/CLaeakMBEYH1+nw2tJR96ZPJmdWhI16m7/b66Q1zrIiUidmpWO6GPp/OSe1/CUsZutlbQ/e8pZgj6fu/af3Ppkepb4WIG7NEgyLnwTjJ3P71fB3k5j4TTwfQGb7fFOIY3UpzyHJCLuZXQsXFN7p/wgKxBnwEm4BigHtzzGpXHTxqhtH+MlMlMdaj1vV0Sdt5ZMnGCRT+tb3JxdAteUqC5Yjc3iUGHUHZLFIiK/VVdDx2x6zSgAn2W/hna+6aZevc0TdXaGQoDIVaQxGCJ0ZNJRzxVSTpKHKCjfhGeA50DPO3uRl4E6jIv7Z4I3168qFw88t65CE775CKuAf0amI6jsU=
-  file: target/release/dotty.tar.gz
-  skip_cleanup: true
-  on:
-    tags: true
-    repo: Lindenk/dotty
