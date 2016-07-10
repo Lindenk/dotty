@@ -29,7 +29,7 @@ First, make a directory containing the config files you want to version:
         - .zshrc
 ```
 
-Then, add a `modules.yml` file for dotty to read:
+Then, add a `module.yml` file for dotty to read:
 
 ```
 - dotfiles 
@@ -40,7 +40,7 @@ Then, add a `modules.yml` file for dotty to read:
         - .zshrc
 ```
 
-In this example, we will use the following `modules.yml` configuration:
+In this example, we will use the following `module.yml` configuration:
 
 ```yaml 
 name: zsh 
