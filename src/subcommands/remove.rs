@@ -1,10 +1,7 @@
-use module::Module;
 use error::DottyError;
 use config::Config;
 use data::{load_module_data, remove_module, is_module_installed};
 use file::remove_file;
-
-use std::env::current_dir;
 
 pub struct RemoveOptions {
     pub module_name : String

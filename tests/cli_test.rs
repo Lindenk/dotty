@@ -79,11 +79,7 @@ fn simple_install() {
     config.write(d_config.as_bytes()).unwrap();
     
     // Make sure the command runs
-    let expected_output = indoc!("
-        Installing module 'test'...
-        Linking 'cli_tests1/test/file1' to 'cli_tests1/test_dest/file1_link'...
-    ");
-    assert_cli!("cargo", &["run", "--", "-c", "cli_tests1/config.yaml", "install", "cli_tests1/test"] => Success, expected_output).unwrap();
+    assert_cli!("cargo", &["run", "--", "-c", "cli_tests1/config.yaml", "install", "cli_tests1/test"] => Success).unwrap();
     
     // Check the resulting file system to see if it's correct 
     let sym_path = Path::new("cli_tests1/test_dest/file1_link");
@@ -115,11 +111,7 @@ fn recursive_install() {
     config.write(d_config.as_bytes()).unwrap();
     
     // Make sure the command runs
-    let expected_output = indoc!("
-        Installing module 'test'...
-        Linking 'cli_tests2/test/dir1' to 'cli_tests2/test_dest/dir1'...
-    ");
-    assert_cli!("cargo", &["run", "--", "-c", "cli_tests2/config.yaml", "install", "cli_tests2/test"] => Success, expected_output).unwrap();
+    assert_cli!("cargo", &["run", "--", "-c", "cli_tests2/config.yaml", "install", "cli_tests2/test"] => Success).unwrap();
     
     // Check the resulting file system to see if it's correct 
     let sym_paths = (Path::new("cli_tests2/test_dest/dir1/file1"), Path::new("cli_tests2/test_dest/dir1/file2"));
@@ -153,11 +145,7 @@ fn remove() {
     config.write(d_config.as_bytes()).unwrap();
     
     // Make sure the command runs
-    let expected_output_install = indoc!("
-        Installing module 'test'...
-        Linking 'cli_tests3/test/dir1' to 'cli_tests3/test_dest/dir1'...
-    ");
-    assert_cli!("cargo", &["run", "--", "-c", "cli_tests3/config.yaml", "install", "cli_tests3/test"] => Success, expected_output_install).unwrap();
+    assert_cli!("cargo", &["run", "--", "-c", "cli_tests3/config.yaml", "install", "cli_tests3/test"] => Success).unwrap();
     
     // Check the resulting file system to see if it's correct 
     let sym_paths = (Path::new("cli_tests3/test_dest/dir1/file1"), Path::new("cli_tests3/test_dest/dir1/file2"));
@@ -168,16 +156,9 @@ fn remove() {
     
     
     // Test remove - NOTE: This is broken right now because I can't have assert_cli ignore the program's output
-    /*
-    let expected_output_remove = indoc!("
-        Removing module 'test'...
-        Removing link 'cli_tests3/test_dest/dir1/file1'
-        Removing link 'cli_tests3/test_dest/dir1/file2'
-    ");
-    assert_cli!("cargo", &["run", "--", "-c", "cli_tests3/config.yaml", "remove", "test"] => Success, expected_output_remove).unwrap();
+    assert_cli!("cargo", &["run", "--", "-c", "cli_tests3/config.yaml", "remove", "test"] => Success).unwrap();
     
     let sym_paths = (Path::new("cli_tests3/test_dest/dir1/file1"), Path::new("cli_tests3/test_dest/dir1/file2"));
     assert!(! &sym_paths.0.exists());
     assert!(! &sym_paths.1.exists());
-    */
 }
