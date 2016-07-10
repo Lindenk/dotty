@@ -17,7 +17,52 @@ Dotty is an advanced dotfile manager based on GNU stow with a focus on keep conf
 - GUI and/or ncurses interface.
 - Support for multiple repositories / external modules.
 
-## Usage ##
+## Quick Start ##
+
+First, make a directory containing the config files you want to version:
+
+```
+- dotfiles
+    - zsh
+        - .zshenv
+        - .zprofile
+        - .zshrc
+```
+
+Then, add a `modules.yml` file for dotty to read:
+
+```
+- dotfiles 
+    - zsh 
+        - modules.yml
+        - .zshenv 
+        - .zprofile 
+        - .zshrc
+```
+
+In this example, we will use the following `modules.yml` configuration:
+
+```yaml 
+name: zsh 
+links: 
+    - .zshenv:~/.zshenv 
+    - .zprofile:~/.zprofile 
+    - .zshrc:~/.zshrc 
+```
+
+Now install your new module:
+
+```
+dotty install dotfiles/zsh 
+```
+
+This will install the `zsh` module. To remove it:
+
+```
+dotty remove zsh 
+```
+
+## Reference ##
 
 With dotty, you can:
 - Install a module
@@ -43,6 +88,7 @@ When installing a module, the following will occur in order:
 The following flags are supported for `dotty install`:
 
 ```
+(Not implemented yet)
 -f      Force install all files, even if they overwrite exiting ones
 ```
 
@@ -64,11 +110,14 @@ When removing an installed module, the following will occur in order:
 The following flags are supported for `dotty remove`:
 
 ```
+(Not implemented yet)
 -r      Recursively remove all dependancies installed by this module if they are not being used
         by another module and were not explicitly installed
 ```
 
 ### Reinstall ###
+(Not implemented yet)
+
 Effectively runs `remove` on a module, then runs `install` on it.
 
 ```bash
@@ -83,6 +132,8 @@ The following flags are support for `dotty reinstall`:
 ```
 
 ### Update ###
+(Not implemented yet)
+
 Recompiles any generated files and re-symlinks all files. Does not run hooks.
 
 ```bash
@@ -125,7 +176,9 @@ config
 
 ```yaml
 links:
-    - config/.config
+    - config:~/.config
+
+(Not implemented yet)
 append:
     .Xresources: config/.Xresources
 hooks:
@@ -144,5 +197,5 @@ dependancies:
 Dotty itself can be configured with a config file in `~/.config/dotty/config.yml` by default. The following configurations are supported:
 
 ```yaml
-default_target_dir: "/path/to/target/dir"
+default_data_dir: "/path/to/data/dir"
 ```
