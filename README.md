@@ -17,6 +17,14 @@ Dotty is an advanced dotfile manager based on GNU stow with a focus on keep conf
 - GUI and/or ncurses interface.
 - Support for multiple repositories / external modules.
 
+## Installation ##
+
+Currently there aren't any built binaries to download (although that might come in the future). Dotty can be built using the nightly rust like so:
+
+```
+cargo build --release
+```
+
 ## Quick Start ##
 
 First, make a directory containing the config files you want to version:
