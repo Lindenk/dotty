@@ -34,7 +34,7 @@ Then, add a `module.yml` file for dotty to read:
 ```
 - dotfiles 
     - zsh 
-        - modules.yml
+        - module.yml
         - .zshenv 
         - .zprofile 
         - .zshrc
