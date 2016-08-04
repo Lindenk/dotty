@@ -1,3 +1,7 @@
+# NOTE #
+
+Unfortunately, I've decided to axe this project. While there were features in a dotfile manager that I would have liked and have listed in this project's spec, there are other completed and wildly used managers that can be made to work the way I would like. Next time, I'll take a better look at what's available before I start a new project. On the positive side, I learned quite a lot about rust while working on this!
+
 # dotty #
 [![Build Status](https://travis-ci.org/Lindenk/dotty.svg?branch=master)](https://travis-ci.org/Lindenk/dotty)
 [![Build status](https://ci.appveyor.com/api/projects/status/ob7ueebe01pgt4vb/branch/master?svg=true)](https://ci.appveyor.com/project/Lindenk/dotty/branch/master)
